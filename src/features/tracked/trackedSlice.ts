@@ -1,9 +1,8 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 
-import type { RootState, AppDispatch } from '../../app/store';
 import type { GitHubRepoSummary, RepoStats, TrackedRepo } from '../../types';
 
-// State 
+// ─── State ──────────────────────────────────────────────────────────────────
 
 export interface TrackedState {
   ids: number[];
@@ -15,7 +14,7 @@ const initialState: TrackedState = {
   entities: {},
 };
 
-// Helpers
+// ─── Helpers ────────────────────────────────────────────────────────────────
 
 const GITHUB_BASE = 'https://api.github.com';
 const MAX_CONCURRENT = 5;
@@ -25,14 +24,27 @@ function githubHeaders(): HeadersInit {
     Accept: 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
   };
-  const token = import.meta.env['VITE_GITHUB_TOKEN'] as string | undefined;
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const token: unknown = import.meta.env['VITE_GITHUB_TOKEN'];
+  if (typeof token === 'string' && token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
   return headers;
 }
 
-function normalizeError(error: unknown, status?: number): string {
-  if (status === 404) return 'Repository not found — it may have been deleted or renamed.';
-  if (status === 403 || status === 429) return 'Rate limit exceeded — try again later.';
+class FetchError extends Error {
+  readonly status: number;
+  constructor(status: number) {
+    super(`HTTP ${status}`);
+    this.name = 'FetchError';
+    this.status = status;
+  }
+}
+
+function normalizeError(error: unknown): string {
+  if (error instanceof FetchError) {
+    if (error.status === 404) return 'Repository not found — it may have been deleted or renamed.';
+    if (error.status === 403 || error.status === 429) return 'Rate limit exceeded — try again later.';
+  }
   if (error instanceof TypeError) return 'Network error — check your connection.';
   return 'Something went wrong.';
 }
@@ -45,8 +57,8 @@ async function fetchRepoStats(owner: string, repo: string): Promise<RepoStats> {
     fetch(`${GITHUB_BASE}/repos/${owner}/${repo}/commits?per_page=1`, { headers }),
   ]);
 
-  if (!statsRes.ok) throw { status: statsRes.status };
-  if (!commitsRes.ok) throw { status: commitsRes.status };
+  if (!statsRes.ok) throw new FetchError(statsRes.status);
+  if (!commitsRes.ok) throw new FetchError(commitsRes.status);
 
   const statsJson = (await statsRes.json()) as {
     stargazers_count: number;
@@ -63,12 +75,17 @@ async function fetchRepoStats(owner: string, repo: string): Promise<RepoStats> {
   };
 }
 
-// Thunks
+// Minimal state shape so thunks don't import from store (avoids circular dep).
+interface ThunkState {
+  tracked: TrackedState;
+}
+
+// ─── Thunks ─────────────────────────────────────────────────────────────────
 
 export const refreshRepo = createAsyncThunk<
   { id: number; stats: RepoStats },
   number,
-  { state: RootState; rejectValue: string }
+  { state: ThunkState; rejectValue: string }
 >(
   'tracked/refreshRepo',
   async (id, { getState, rejectWithValue }) => {
@@ -79,12 +96,10 @@ export const refreshRepo = createAsyncThunk<
       const stats = await fetchRepoStats(entity.owner, entity.name);
       return { id, stats };
     } catch (err: unknown) {
-      const status = (err as { status?: number }).status;
-      return rejectWithValue(normalizeError(err, status));
+      return rejectWithValue(normalizeError(err));
     }
   },
   {
-    // Skip if this repo is already refreshing.
     condition: (id, { getState }) => {
       const entity = getState().tracked.entities[id];
       return entity?.status !== 'loading';
@@ -93,25 +108,26 @@ export const refreshRepo = createAsyncThunk<
 );
 
 export const refreshAllRepos = createAsyncThunk<
-  void,
-  void,
-  { state: RootState; dispatch: AppDispatch }
+  undefined,
+  undefined,
+  { state: ThunkState }
 >(
   'tracked/refreshAllRepos',
   async (_, { getState, dispatch }) => {
     const ids = [...getState().tracked.ids];
 
-    // Process in chunks of MAX_CONCURRENT.
     for (let i = 0; i < ids.length; i += MAX_CONCURRENT) {
       const chunk = ids.slice(i, i + MAX_CONCURRENT);
       await Promise.allSettled(
         chunk.map((id) => dispatch(refreshRepo(id))),
       );
     }
+
+    return undefined;
   },
 );
 
-// Slice 
+// ─── Slice ──────────────────────────────────────────────────────────────────
 
 const trackedSlice = createSlice({
   name: 'tracked',
@@ -119,7 +135,7 @@ const trackedSlice = createSlice({
   reducers: {
     trackRepo(state, action: PayloadAction<GitHubRepoSummary>) {
       const repo = action.payload;
-      if (state.entities[repo.id]) return; // already tracked
+      if (state.entities[repo.id]) return;
 
       state.ids.push(repo.id);
       state.entities[repo.id] = {
@@ -136,8 +152,9 @@ const trackedSlice = createSlice({
     },
     untrackRepo(state, action: PayloadAction<number>) {
       const id = action.payload;
-      delete state.entities[id];
       state.ids = state.ids.filter((i) => i !== id);
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- normalized entity removal
+      delete state.entities[id];
     },
     // Used by localStorage hydration.
     hydrateTracked(_state, action: PayloadAction<TrackedState>) {

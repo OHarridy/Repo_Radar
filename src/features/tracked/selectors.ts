@@ -1,23 +1,29 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-import type { RootState } from '../../app/store';
 import type { TrackedRepo } from '../../types';
+import type { TrackedState } from './trackedSlice';
 
-// Base selectors
+// Selectors use a minimal state shape to avoid circular deps with the store.
+interface WithTracked {
+  tracked: TrackedState;
+}
 
-export const selectTrackedIds = (state: RootState) => state.tracked.ids;
-export const selectTrackedEntities = (state: RootState) => state.tracked.entities;
+// ─── Base selectors ─────────────────────────────────────────────────────────
 
-export const selectTrackedRepoById = (state: RootState, id: number) =>
+export const selectTrackedIds = (state: WithTracked) => state.tracked.ids;
+export const selectTrackedEntities = (state: WithTracked) => state.tracked.entities;
+
+export const selectTrackedRepoById = (state: WithTracked, id: number) =>
   state.tracked.entities[id];
 
 export const selectAllTrackedRepos = createSelector(
   [selectTrackedIds, selectTrackedEntities],
   (ids, entities): TrackedRepo[] =>
-    ids.flatMap((id) => {
+    ids.reduce<TrackedRepo[]>((acc, id) => {
       const entity = entities[id];
-      return entity ? [entity] : [];
-    }),
+      if (entity) acc.push(entity);
+      return acc;
+    }, []),
 );
 
 export const selectTrackedCount = createSelector(
@@ -25,7 +31,7 @@ export const selectTrackedCount = createSelector(
   (ids) => ids.length,
 );
 
-// Chart-data derivations
+// ─── Chart-data derivations ─────────────────────────────────────────────────
 
 export const selectStarDistribution = createSelector(
   [selectAllTrackedRepos],

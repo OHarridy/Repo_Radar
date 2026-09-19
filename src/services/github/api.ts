@@ -41,8 +41,8 @@ export const githubApi = createApi({
       headers.set('Accept', 'application/vnd.github+json');
       headers.set('X-GitHub-Api-Version', '2022-11-28');
 
-      const token = import.meta.env['VITE_GITHUB_TOKEN'] as string | undefined;
-      if (token) {
+      const token: unknown = import.meta.env['VITE_GITHUB_TOKEN'];
+      if (typeof token === 'string' && token) {
         headers.set('Authorization', `Bearer ${token}`);
       }
 
