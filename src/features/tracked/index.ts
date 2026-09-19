@@ -10,3 +10,4 @@ export {
   selectIssueDistribution,
   selectIsAnyRefreshing,
 } from './selectors';
+export * from './TrackedList';

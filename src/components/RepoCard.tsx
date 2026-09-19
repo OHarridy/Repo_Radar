@@ -11,11 +11,11 @@ import {
   Alert
 } from '@mui/material';
 import {
-  StarOutline as StarIcon,
-  ErrorOutline as IssueIcon,
+  StarOutlined as StarIcon,
+  ErrorOutlined as IssueIcon,
   Refresh as RefreshIcon,
   Add as AddIcon,
-  DeleteOutline as DeleteIcon,
+  DeleteOutlined as DeleteIcon,
 } from '@mui/icons-material';
 
 import type { RequestStatus } from '../types';
@@ -25,8 +25,8 @@ export interface RepoCardProps {
   fullName: string;
   description?: string | null;
   htmlUrl: string;
-  stars: number;
-  openIssues: number;
+  stars?: number;
+  openIssues?: number;
   
   // Tracked specific
   isTracked?: boolean;
@@ -87,16 +87,16 @@ export function RepoCard({
           <Tooltip title="Stars">
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <StarIcon fontSize="small" color="action" aria-hidden="true" />
-              <Typography variant="body2" component="span" aria-label={`${stars} stars`}>
-                {stars.toLocaleString()}
+              <Typography variant="body2" component="span" aria-label={`${stars ?? '-'} stars`}>
+                {stars !== undefined ? stars.toLocaleString() : '-'}
               </Typography>
             </Box>
           </Tooltip>
           <Tooltip title="Open Issues & PRs">
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <IssueIcon fontSize="small" color="action" aria-hidden="true" />
-              <Typography variant="body2" component="span" aria-label={`${openIssues} open issues and PRs`}>
-                {openIssues.toLocaleString()}
+              <Typography variant="body2" component="span" aria-label={`${openIssues ?? '-'} open issues and PRs`}>
+                {openIssues !== undefined ? openIssues.toLocaleString() : '-'}
               </Typography>
             </Box>
           </Tooltip>
