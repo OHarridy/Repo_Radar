@@ -21,3 +21,30 @@ This application handles two distinct types of data, which are intentionally mod
 - **Tracked Repos**: Save repositories for long-term tracking. 
 - **Analytics Charts**: Visualizations built with Recharts to compare stars and open issues across all tracked repositories, automatically scaling vertically for 50+ repos.
 - **Robust Error Handling**: Individual repositories manage their own API rate-limits and network failures, preventing one error from breaking the entire dashboard.
+
+## Setup Instructions
+
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+2. **Environment Setup (Optional)**:
+   By default, the GitHub API limits unauthenticated requests to 60 per hour. To increase this create a `.env` file in the root directory and add a GitHub personal access token:
+   ```
+   VITE_GITHUB_TOKEN=your_github_token_here
+   ```
+3. **Run the Development Server**:
+   ```bash
+   npm run dev
+   ```
+4. **Run Tests**:
+   ```bash
+   npm run test
+   ```
+
+## Assumptions & Limitations
+
+- **Open Issues Count**: The GitHub API returns both open issues and pull requests under the `open_issues_count` field. The UI reflects this combined total.
+- **Rate Limiting**: Without a `VITE_GITHUB_TOKEN`, heavy usage (especially "Refresh All" on a large list of tracked repositories) will hit the 60 requests/hour limit quickly. The app handles this gracefully by displaying rate-limit errors per repository without crashing.
+- **Last Commit Date**: The `pushed_at` field on a repository updates whenever *any* branch is pushed to. To ensure we display the accurate last commit date of the default branch, the app fetches the latest commit explicitly, resulting in an additional API call per tracked repository during a refresh.
+- **Refresh Concurrency**: To avoid overwhelming the browser and the GitHub API, "Refresh All" throttles requests in chunks of 5 concurrently.
