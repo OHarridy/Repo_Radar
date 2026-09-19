@@ -63,7 +63,7 @@ export function SearchUI() {
         label="Search GitHub Repositories"
         variant="outlined"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => { setQuery(e.target.value); }}
         placeholder="e.g. react, vite, typescript"
         slotProps={{
           input: {

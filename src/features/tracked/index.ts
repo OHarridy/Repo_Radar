@@ -8,6 +8,7 @@ export {
   selectTrackedCount,
   selectStarDistribution,
   selectIssueDistribution,
+  selectCombinedChartData,
   selectIsAnyRefreshing,
 } from './selectors';
 export * from './TrackedList';

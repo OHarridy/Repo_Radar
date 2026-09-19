@@ -21,11 +21,11 @@ export function TrackedList() {
   };
 
   const handleRefresh = (id: number) => {
-    dispatch(refreshRepo(id));
+    void dispatch(refreshRepo(id));
   };
 
   const handleRefreshAll = () => {
-    dispatch(refreshAllRepos());
+    void dispatch(refreshAllRepos());
   };
 
   if (trackedRepos.length === 0) {

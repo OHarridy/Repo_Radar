@@ -66,7 +66,7 @@ export function RepoCard({
           {onToggleTrack && (
             <Tooltip title={isTracked ? "Untrack repository" : "Track repository"}>
               <IconButton 
-                onClick={() => onToggleTrack(id)} 
+                onClick={() => { onToggleTrack(id); }} 
                 aria-label={isTracked ? "untrack repository" : "track repository"}
                 color={isTracked ? "error" : "primary"}
                 size="small"
@@ -122,7 +122,7 @@ export function RepoCard({
           <Tooltip title="Refresh stats">
             <span>
               <IconButton 
-                onClick={() => onRefresh(id)} 
+                onClick={() => { onRefresh(id); }} 
                 disabled={isLoading}
                 aria-label="refresh stats"
                 size="small"

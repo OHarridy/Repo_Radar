@@ -49,6 +49,18 @@ export const selectIssueDistribution = createSelector(
       .map((r) => ({ name: r.fullName, openIssues: r.stats.openIssues })),
 );
 
+export const selectCombinedChartData = createSelector(
+  [selectAllTrackedRepos],
+  (repos) =>
+    repos
+      .filter((r): r is TrackedRepo & { stats: NonNullable<TrackedRepo['stats']> } => r.stats !== null)
+      .map((r) => ({
+        name: r.name, // using just name rather than fullName to save space
+        stars: r.stats.stars,
+        openIssues: r.stats.openIssues,
+      })),
+);
+
 export const selectIsAnyRefreshing = createSelector(
   [selectAllTrackedRepos],
   (repos) => repos.some((r) => r.status === 'loading'),
