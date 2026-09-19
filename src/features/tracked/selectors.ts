@@ -8,7 +8,7 @@ interface WithTracked {
   tracked: TrackedState;
 }
 
-// ─── Base selectors ─────────────────────────────────────────────────────────
+// Base selectors 
 
 export const selectTrackedIds = (state: WithTracked) => state.tracked.ids;
 export const selectTrackedEntities = (state: WithTracked) => state.tracked.entities;
@@ -31,7 +31,7 @@ export const selectTrackedCount = createSelector(
   (ids) => ids.length,
 );
 
-// ─── Chart-data derivations ─────────────────────────────────────────────────
+// Chart-data derivations 
 
 export const selectStarDistribution = createSelector(
   [selectAllTrackedRepos],

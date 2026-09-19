@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/tool
 
 import type { GitHubRepoSummary, RepoStats, TrackedRepo } from '../../types';
 
-// ─── State ──────────────────────────────────────────────────────────────────
+// State 
 
 export interface TrackedState {
   ids: number[];
@@ -14,7 +14,7 @@ const initialState: TrackedState = {
   entities: {},
 };
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
+// Helpers 
 
 const GITHUB_BASE = 'https://api.github.com';
 const MAX_CONCURRENT = 5;
@@ -80,7 +80,7 @@ interface ThunkState {
   tracked: TrackedState;
 }
 
-// ─── Thunks ─────────────────────────────────────────────────────────────────
+// Thunks 
 
 export const refreshRepo = createAsyncThunk<
   { id: number; stats: RepoStats },
@@ -127,7 +127,7 @@ export const refreshAllRepos = createAsyncThunk<
   },
 );
 
-// ─── Slice ──────────────────────────────────────────────────────────────────
+// Slice 
 
 const trackedSlice = createSlice({
   name: 'tracked',

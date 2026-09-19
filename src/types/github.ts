@@ -2,7 +2,7 @@
 export interface GitHubRepoSummary {
   id: number;
   nodeId: string;
-  fullName: string; // "owner/name"
+  fullName: string; // "owner name"
   owner: string;
   name: string;
   description: string | null;
