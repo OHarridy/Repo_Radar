@@ -13,13 +13,15 @@ This application handles two distinct types of data, which are intentionally mod
 ### 2. Persistent, Client-Owned Data (Tracked Repos)
 *   **Mechanism**: Managed by a traditional normalized Redux slice (`features/tracked/trackedSlice.ts`), keyed by repository ID.
 *   **Why?**: Tracked repositories are the user's "favorites" and must persist across sessions. Keying the state by `id` (normalization) guarantees that each repository can be refreshed, load, or fail completely independently of the others. 
-*   **Trade-off**: Because we only persist the core identity of the repository (`id`, `fullName`, `htmlUrl`, etc.) and deliberately *do not* persist the `stats`, `status`, or `error` in localStorage, users might briefly see empty charts on a hard reload before the `refreshAllRepos` thunk fetches fresh data. This guarantees correctness—preventing stale data from being misinterpreted as fresh.
+*   **Data Hydration & Freshness**: To provide an instant, zero-layout-shift experience, we persist both the repository identity and its latest known `stats` to `localStorage`. On page reload, the chart instantly renders from the cache, while a background `refreshAllRepos` thunk automatically kicks off to fetch the freshest data from GitHub silently.
 
 ## Features
 
 - **Debounced Search**: Queries only hit the GitHub API when the user pauses typing.
 - **Tracked Repos**: Save repositories for long-term tracking. 
-- **Analytics Charts**: Visualizations built with Recharts to compare stars and open issues across all tracked repositories, automatically scaling vertically for 50+ repos.
+- **Instant Chart Updates**: When tracking a new repository, its statistics are instantly carried over from the search results—populating the dashboard immediately without triggering duplicate API calls.
+- **Decoupled Loading States**: Global "Refresh All" loading states are entirely decoupled from individual repository refreshes, meaning individual cards can spin independently without locking the global UI.
+- **Analytics Charts**: Visualizations built with Recharts to compare stars and open issues across all tracked repositories, automatically scaling vertically and accounting for precise box-model padding to prevent UI jitter.
 - **Robust Error Handling**: Individual repositories manage their own API rate-limits and network failures, preventing one error from breaking the entire dashboard.
 
 ## Setup Instructions
