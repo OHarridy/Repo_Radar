@@ -4,7 +4,7 @@ import { Refresh as RefreshIcon } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   selectAllTrackedRepos,
-  selectIsAnyRefreshing,
+  selectIsRefreshingAll,
   untrackRepo,
   refreshRepo,
   refreshAllRepos,
@@ -14,7 +14,7 @@ import { RepoCard } from '../../components';
 export function TrackedList() {
   const dispatch = useAppDispatch();
   const trackedRepos = useAppSelector(selectAllTrackedRepos);
-  const isAnyRefreshing = useAppSelector(selectIsAnyRefreshing);
+  const isRefreshingAll = useAppSelector(selectIsRefreshingAll);
 
   const handleUntrack = (id: number) => {
     dispatch(untrackRepo(id));
@@ -49,11 +49,11 @@ export function TrackedList() {
         </Typography>
         <Button
           variant="outlined"
-          startIcon={isAnyRefreshing ? <CircularProgress size={20} color="inherit" /> : <RefreshIcon />}
+          startIcon={isRefreshingAll ? <CircularProgress size={20} color="inherit" /> : <RefreshIcon />}
           onClick={handleRefreshAll}
-          disabled={isAnyRefreshing}
+          disabled={isRefreshingAll}
         >
-          {isAnyRefreshing ? 'Refreshing...' : 'Refresh All'}
+          {isRefreshingAll ? 'Refreshing...' : 'Refresh All'}
         </Button>
       </Box>
 

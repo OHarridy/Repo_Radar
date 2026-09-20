@@ -23,7 +23,7 @@ function loadTrackedState(): TrackedState | undefined {
     if (obj['v'] !== 1 || !Array.isArray(obj['repos'])) return undefined;
     const repos = obj['repos'] as unknown[];
 
-    const state: TrackedState = { ids: [], entities: {} };
+    const state: TrackedState = { ids: [], entities: {}, isRefreshingAll: false };
 
     for (const entry of repos) {
       if (typeof entry !== 'object' || entry === null) continue;

@@ -65,3 +65,5 @@ export const selectIsAnyRefreshing = createSelector(
   [selectAllTrackedRepos],
   (repos) => repos.some((r) => r.status === 'loading'),
 );
+
+export const selectIsRefreshingAll = (state: WithTracked) => state.tracked.isRefreshingAll;

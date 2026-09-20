@@ -3,9 +3,10 @@ import reducer, { trackRepo, untrackRepo, hydrateTracked } from './trackedSlice'
 import type { TrackedState } from './trackedSlice';
 
 describe('trackedSlice reducers', () => {
-  const initialState: TrackedState = {
+    const initialState: TrackedState = {
     ids: [],
     entities: {},
+    isRefreshingAll: false,
   };
 
   it('should return initial state on unknown action', () => {
@@ -71,6 +72,7 @@ describe('trackedSlice reducers', () => {
           lastFetchedAt: null,
         },
       },
+      isRefreshingAll: false,
     };
 
     const nextState = reducer(stateWithRepo, trackRepo(mockRepo));
@@ -104,6 +106,7 @@ describe('trackedSlice reducers', () => {
           lastFetchedAt: null,
         },
       },
+      isRefreshingAll: false,
     };
 
     const nextState = reducer(stateWithRepo, untrackRepo(123));
@@ -130,6 +133,7 @@ describe('trackedSlice reducers', () => {
           lastFetchedAt: null,
         },
       },
+      isRefreshingAll: false,
     };
 
     const nextState = reducer(initialState, hydrateTracked(hydratedState));

@@ -7,11 +7,13 @@ import type { GitHubRepoSummary, RepoStats, TrackedRepo } from '../../types';
 export interface TrackedState {
   ids: number[];
   entities: Record<number, TrackedRepo>;
+  isRefreshingAll: boolean;
 }
 
 const initialState: TrackedState = {
   ids: [],
   entities: {},
+  isRefreshingAll: false,
 };
 
 // Helpers 
@@ -193,6 +195,15 @@ const trackedSlice = createSlice({
           entity.status = 'error';
           entity.error = action.payload ?? 'Something went wrong.';
         }
+      })
+      .addCase(refreshAllRepos.pending, (state) => {
+        state.isRefreshingAll = true;
+      })
+      .addCase(refreshAllRepos.fulfilled, (state) => {
+        state.isRefreshingAll = false;
+      })
+      .addCase(refreshAllRepos.rejected, (state) => {
+        state.isRefreshingAll = false;
       });
   },
 });
