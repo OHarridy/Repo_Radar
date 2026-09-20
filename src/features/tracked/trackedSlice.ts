@@ -33,17 +33,25 @@ function githubHeaders(): HeadersInit {
 
 class FetchError extends Error {
   readonly status: number;
-  constructor(status: number) {
+  readonly resetTime: string | null;
+  constructor(status: number, resetTime: string | null = null) {
     super(`HTTP ${status}`);
     this.name = 'FetchError';
     this.status = status;
+    this.resetTime = resetTime;
   }
 }
 
 function normalizeError(error: unknown): string {
   if (error instanceof FetchError) {
     if (error.status === 404) return 'Repository not found — it may have been deleted or renamed.';
-    if (error.status === 403 || error.status === 429) return 'Rate limit exceeded — try again later.';
+    if (error.status === 403 || error.status === 429) {
+      if (error.resetTime) {
+        const date = new Date(parseInt(error.resetTime, 10) * 1000);
+        return `Rate limit exceeded. Resets at ${date.toLocaleTimeString()}.`;
+      }
+      return 'Rate limit exceeded — try again later.';
+    }
   }
   if (error instanceof TypeError) return 'Network error — check your connection.';
   return 'Something went wrong.';
@@ -57,8 +65,8 @@ async function fetchRepoStats(owner: string, repo: string): Promise<RepoStats> {
     fetch(`${GITHUB_BASE}/repos/${owner}/${repo}/commits?per_page=1`, { headers }),
   ]);
 
-  if (!statsRes.ok) throw new FetchError(statsRes.status);
-  if (!commitsRes.ok) throw new FetchError(commitsRes.status);
+  if (!statsRes.ok) throw new FetchError(statsRes.status, statsRes.headers.get('x-ratelimit-reset'));
+  if (!commitsRes.ok) throw new FetchError(commitsRes.status, commitsRes.headers.get('x-ratelimit-reset'));
 
   const statsJson = (await statsRes.json()) as {
     stargazers_count: number;

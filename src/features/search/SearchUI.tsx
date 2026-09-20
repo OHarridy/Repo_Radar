@@ -44,9 +44,9 @@ export function SearchUI() {
   let errorMessage: string | null = null;
   if (error) {
     if ('status' in error) {
-      if (error.status === 403 || error.status === 429) {
-        // Fallback generic rate limit message, note: full x-ratelimit-reset 
-        // reading would require parsing from a custom fetchBaseQuery
+      if (error.status === 'CUSTOM_ERROR') {
+        errorMessage = error.error;
+      } else if (error.status === 403 || error.status === 429) {
         errorMessage = 'GitHub API rate limit exceeded. Please wait a few minutes before searching again.';
       } else {
         errorMessage = `An error occurred: ${error.status}`;

@@ -65,6 +65,18 @@ export const githubApi = createApi({
           openIssues: item.open_issues_count,
           pushedAt: item.pushed_at,
         })),
+      transformErrorResponse: (response, meta) => {
+        if (response.status === 403 || response.status === 429) {
+          const reset = meta?.response?.headers.get('x-ratelimit-reset');
+          let errorMsg = 'GitHub API rate limit exceeded. Please wait a few minutes before searching again.';
+          if (reset) {
+            const date = new Date(parseInt(reset, 10) * 1000);
+            errorMsg = `Rate limit exceeded. Resets at ${date.toLocaleTimeString()}.`;
+          }
+          return { status: 'CUSTOM_ERROR', error: errorMsg };
+        }
+        return response;
+      },
     }),
 
     getRepoStats: builder.query<
