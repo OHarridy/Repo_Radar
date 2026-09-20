@@ -98,16 +98,16 @@ export function RepoCard({
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
           <Tooltip title="Stars">
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <StarIcon fontSize="small" color="action" aria-hidden="true" />
-              <Typography variant="body2" component="span" aria-label={`${stars ?? '-'} stars`}>
+              <StarIcon fontSize="small" color="action" aria-hidden="true" sx={{ mt: '-2px' }} />
+              <Typography variant="body2" component="span" sx={{ lineHeight: 1 }} aria-label={`${stars ?? '-'} stars`}>
                 {stars !== undefined ? stars.toLocaleString() : '-'}
               </Typography>
             </Box>
           </Tooltip>
           <Tooltip title="Open Issues & PRs">
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <IssueIcon fontSize="small" color="action" aria-hidden="true" />
-              <Typography variant="body2" component="span" aria-label={`${openIssues ?? '-'} open issues and PRs`}>
+              <IssueIcon fontSize="small" color="action" aria-hidden="true" sx={{ mt: '-2px' }} />
+              <Typography variant="body2" component="span" sx={{ lineHeight: 1 }} aria-label={`${openIssues ?? '-'} open issues and PRs`}>
                 {openIssues !== undefined ? openIssues.toLocaleString() : '-'}
               </Typography>
             </Box>
