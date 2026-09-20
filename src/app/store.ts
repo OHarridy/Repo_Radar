@@ -33,6 +33,7 @@ function loadTrackedState(): TrackedState | undefined {
       const owner = (entry as Record<string, unknown>)['owner'];
       const name = (entry as Record<string, unknown>)['name'];
       const htmlUrl = (entry as Record<string, unknown>)['htmlUrl'];
+      const stats = (entry as Record<string, unknown>)['stats'] as TrackedState['entities'][number]['stats'];
 
       if (
         typeof id !== 'number' ||
@@ -49,7 +50,7 @@ function loadTrackedState(): TrackedState | undefined {
         owner,
         name,
         htmlUrl,
-        stats: null,
+        stats: stats || null,
         status: 'idle',
         error: null,
         lastFetchedAt: null,

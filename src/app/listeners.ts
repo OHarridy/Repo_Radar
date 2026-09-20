@@ -19,7 +19,7 @@ listenerMiddleware.startListening({
     const { ids, entities } = (listenerApi.getState() as { tracked: TrackedState }).tracked;
 
     const durable = ids.reduce<
-      Array<{ id: number; fullName: string; owner: string; name: string; htmlUrl: string }>
+      Array<{ id: number; fullName: string; owner: string; name: string; htmlUrl: string; stats: TrackedState['entities'][number]['stats'] }>
     >((acc, id) => {
       const e = entities[id];
       if (e) {
@@ -29,6 +29,7 @@ listenerMiddleware.startListening({
           owner: e.owner,
           name: e.name,
           htmlUrl: e.htmlUrl,
+          stats: e.stats,
         });
       }
       return acc;

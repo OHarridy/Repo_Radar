@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Box, Typography, Button, CircularProgress } from '@mui/material';
 import { Refresh as RefreshIcon } from '@mui/icons-material';
 
@@ -15,6 +16,11 @@ export function TrackedList() {
   const dispatch = useAppDispatch();
   const trackedRepos = useAppSelector(selectAllTrackedRepos);
   const isRefreshingAll = useAppSelector(selectIsRefreshingAll);
+
+  // Automatically refresh stats for all tracked repos when the app boots up
+  useEffect(() => {
+    void dispatch(refreshAllRepos());
+  }, [dispatch]);
 
   const handleUntrack = (id: number) => {
     dispatch(untrackRepo(id));

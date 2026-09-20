@@ -36,7 +36,11 @@ describe('trackedSlice reducers', () => {
       owner: 'owner',
       name: 'repo',
       htmlUrl: 'http://github.com/owner/repo',
-      stats: null,
+      stats: {
+        stars: 10,
+        openIssues: 2,
+        lastCommitAt: null,
+      },
       status: 'idle',
       error: null,
       lastFetchedAt: null,
