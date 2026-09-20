@@ -39,7 +39,7 @@ describe('trackedSlice reducers', () => {
       stats: {
         stars: 10,
         openIssues: 2,
-        lastCommitAt: null,
+        lastCommitAt: '2026-09-19T00:00:00Z',
       },
       status: 'idle',
       error: null,

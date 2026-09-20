@@ -157,7 +157,7 @@ const trackedSlice = createSlice({
         stats: {
           stars: repo.stars,
           openIssues: repo.openIssues,
-          lastCommitAt: null,
+          lastCommitAt: repo.pushedAt,
         },
         status: 'idle',
         error: null,
