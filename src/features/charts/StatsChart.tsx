@@ -44,8 +44,8 @@ export function StatsChart({ data }: StatsChartProps) {
   }
 
   // Calculate dynamic height to ensure bars stay readable even with 50+ items
-  // Minimum height is 400px, otherwise 50px per bar
-  const chartHeight = Math.max(400, data.length * 50);
+  // Minimum height is 368px (400px container height - 32px padding), otherwise 60px per bar
+  const chartHeight = Math.max(368, data.length * 60);
 
   return (
     <Box
