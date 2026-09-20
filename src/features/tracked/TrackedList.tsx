@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { Box, Typography, Button, CircularProgress } from '@mui/material';
-import { Refresh as RefreshIcon } from '@mui/icons-material';
+import { Refresh as RefreshIcon, DeleteSweep as DeleteSweepIcon } from '@mui/icons-material';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   selectAllTrackedRepos,
   selectIsRefreshingAll,
   untrackRepo,
+  untrackAllRepos,
   refreshRepo,
   refreshAllRepos,
 } from './index';
@@ -24,6 +25,12 @@ export function TrackedList() {
 
   const handleUntrack = (id: number) => {
     dispatch(untrackRepo(id));
+  };
+
+  const handleUntrackAll = () => {
+    if (window.confirm('Are you sure you want to untrack all repositories?')) {
+      dispatch(untrackAllRepos());
+    }
   };
 
   const handleRefresh = (id: number) => {
@@ -53,14 +60,24 @@ export function TrackedList() {
         <Typography variant="h5" component="h2">
           Tracked Repositories
         </Typography>
-        <Button
-          variant="outlined"
-          startIcon={isRefreshingAll ? <CircularProgress size={20} color="inherit" /> : <RefreshIcon />}
-          onClick={handleRefreshAll}
-          disabled={isRefreshingAll}
-        >
-          {isRefreshingAll ? 'Refreshing...' : 'Refresh All'}
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={isRefreshingAll ? <CircularProgress size={20} color="inherit" /> : <RefreshIcon />}
+            onClick={handleRefreshAll}
+            disabled={isRefreshingAll}
+          >
+            {isRefreshingAll ? 'Refreshing...' : 'Refresh All'}
+          </Button>
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<DeleteSweepIcon />}
+            onClick={handleUntrackAll}
+          >
+            Remove All
+          </Button>
+        </Box>
       </Box>
 
       <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>

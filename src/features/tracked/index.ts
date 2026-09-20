@@ -1,5 +1,5 @@
 export { default as trackedReducer } from './trackedSlice';
-export { trackRepo, untrackRepo, hydrateTracked, refreshRepo, refreshAllRepos } from './trackedSlice';
+export { trackRepo, untrackRepo, untrackAllRepos, hydrateTracked, refreshRepo, refreshAllRepos } from './trackedSlice';
 export {
   selectTrackedIds,
   selectTrackedEntities,

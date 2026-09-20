@@ -3,6 +3,7 @@ import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
 import {
   trackRepo,
   untrackRepo,
+  untrackAllRepos,
   hydrateTracked,
   type TrackedState,
 } from '../features/tracked/trackedSlice';
@@ -13,7 +14,7 @@ const listenerMiddleware = createListenerMiddleware();
 
 // Persist durable identity fields on every track/untrack mutation.
 listenerMiddleware.startListening({
-  matcher: isAnyOf(trackRepo, untrackRepo, hydrateTracked),
+  matcher: isAnyOf(trackRepo, untrackRepo, untrackAllRepos, hydrateTracked),
   effect: (_action, listenerApi) => {
     // Cast needed because listener middleware is untyped (avoids circular dep with store).
     const { ids, entities } = (listenerApi.getState() as { tracked: TrackedState }).tracked;

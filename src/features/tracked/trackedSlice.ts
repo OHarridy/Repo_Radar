@@ -170,6 +170,10 @@ const trackedSlice = createSlice({
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- normalized entity removal
       delete state.entities[id];
     },
+    untrackAllRepos(state) {
+      state.ids = [];
+      state.entities = {};
+    },
     // Used by localStorage hydration.
     hydrateTracked(_state, action: PayloadAction<TrackedState>) {
       return action.payload;
@@ -212,5 +216,5 @@ const trackedSlice = createSlice({
   },
 });
 
-export const { trackRepo, untrackRepo, hydrateTracked } = trackedSlice.actions;
+export const { trackRepo, untrackRepo, untrackAllRepos, hydrateTracked } = trackedSlice.actions;
 export default trackedSlice.reducer;
